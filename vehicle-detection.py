@@ -10,7 +10,11 @@ from os.path 				import splitext, basename, isdir
 from os 					import makedirs
 from src.utils 				import crop_region, image_files_from_folder
 from darknet.python.darknet import detect
+import os
+import ctypes
 
+def c_char_p(text):
+	return ctypes.c_char_p(text.encode('utf-8'))
 
 if __name__ == '__main__':
 
@@ -25,8 +29,13 @@ if __name__ == '__main__':
 		vehicle_netcfg  = 'data/vehicle-detector/yolo-voc.cfg'
 		vehicle_dataset = 'data/vehicle-detector/voc.data'
 
-		vehicle_net  = dn.load_net(vehicle_netcfg, vehicle_weights, 0)
-		vehicle_meta = dn.load_meta(vehicle_dataset)
+		root_dir = os.path.dirname(os.path.abspath(__file__))
+		vehicle_weights = os.path.join(root_dir, vehicle_weights)
+		vehicle_netcfg = os.path.join(root_dir, vehicle_netcfg)
+		vehicle_dataset = os.path.join(root_dir, vehicle_dataset)
+
+		vehicle_net  = dn.load_net(ctypes.c_char_p(vehicle_netcfg.encode('utf-8')), ctypes.c_char_p(vehicle_weights.encode('utf-8')), 0)
+		vehicle_meta = dn.load_meta(ctypes.c_char_p(vehicle_dataset.encode('utf-8')))
 
 		imgs_paths = image_files_from_folder(input_dir)
 		imgs_paths.sort()
@@ -42,9 +51,9 @@ if __name__ == '__main__':
 
 			bname = basename(splitext(img_path)[0])
 
-			R,_ = detect(vehicle_net, vehicle_meta, img_path ,thresh=vehicle_threshold)
+			R,_ = detect(vehicle_net, vehicle_meta, c_char_p(img_path) ,thresh=vehicle_threshold)
 
-			R = [r for r in R if r[0] in ['car','bus']]
+			R = [r for r in R if r[0].decode('utf-8') in ['car','bus']]
 
 			print('\t\t%d cars found' % len(R))
 
