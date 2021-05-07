@@ -34,14 +34,14 @@ def draw_losangle(I,pts,color=(1.,1.,1.),thickness=1):
 		cv2.line(I,pt1,pt2,color,thickness)
 
 # input_dir  = sys.argv[1]
-def main(input_dir, net_path):
+def main(input_dir, wpod_net):
     # input_dir = "/media/data1/datasets/CJ/s_geq_1_d_leq_20/0000_03/"
     output_dir = "./output"
 
     lp_threshold = .5
 
     # wpod_net_path = sys.argv[2]
-    wpod_net = load_model(net_path)
+    
     gt_path = os.path.join(input_dir, "gt", "gt.txt")
     # tracklets_names = ['FrameID', 'trackid', 'top', 'left', 'width', 'height', 'prob', 'classid', 'reserverd1']
     gt_file = np.loadtxt(gt_path, delimiter=",").astype(np.int)
@@ -95,12 +95,16 @@ def main(input_dir, net_path):
                 is_lp_found = True
         
         if is_lp_found:
-            cv2.imwrite('%s/%s_lp.png' % (output_dir,bname),ivehicle)
+            cv2.imwrite(img_path,ivehicle)
     
 
 if __name__ == '__main__':
+    net_path = sys.argv[2]
+    wpod_net = load_model(net_path)
     try:
-        main(sys.argv[1], sys.argv[2])
+        for a in glob(os.path.join(sys.argv[1], "*")):
+            if os.path.isdir(os.path.join(a, "img1")):
+                main(a, wpod_net)
     except:
         traceback.print_exc()
     sys.exit(0)
