@@ -89,39 +89,14 @@ def main(input_dir, net_path):
                 s = Shape(Llp[0].pts)
                 img_pts = Llp[0].pts*wh_ratio.reshape(2,1) + tl_ratio.reshape(2,1)
                 abs_pts = img_pts*im_wh.reshape(2,1)
-                draw_losangle(abs_pts)
+                abs_pts_2 = abs_pts.T.astype(np.int)
+                cv2.fillPoly(ivehicle, [abs_pts_2], (213, 214,206))
+                # draw_losangle(abs_pts)
                 is_lp_found = True
         
         if is_lp_found:
             cv2.imwrite('%s/%s_lp.png' % (output_dir,bname),ivehicle)
-                # writeShapes('%s/%s_lp.txt' % (output_dir,bname),[s])
-            # print current_frame.head()
-            # 
-            # Ivehicle = cv2.imread(img_path)
-            # for a in current_frame
-            # ratio = float(max(Ivehicle.shape[:2]))/min(Ivehicle.shape[:2])
-            # 
-            # 
-            # print "\t\tBound dim: %d, ratio: %f" % (bound_dim,ratio)
-
-            # Llp,LlpImgs,_ = detect_lp(wpod_net,im2single(Ivehicle),bound_dim,2**4,(240,80),lp_threshold)
-
-            # if len(LlpImgs):
-            # 	Ilp = LlpImgs[0]
-            # 	Ilp = cv2.cvtColor(Ilp, cv2.COLOR_BGR2GRAY)
-            # 	Ilp = cv2.cvtColor(Ilp, cv2.COLOR_GRAY2BGR)
-
-            # 	s = Shape(Llp[0].pts)
-
-            # 	cv2.imwrite('%s/%s_lp.png' % (output_dir,bname),Ilp*255.)
-            # 	writeShapes('%s/%s_lp.txt' % (output_dir,bname),[s])
-
-    # except:
-    #     traceback.print_exc()
-    #     sys.exit(1)
-
-    # sys.exit(0)
-    # -
+    
 
 if __name__ == '__main__':
     try:
