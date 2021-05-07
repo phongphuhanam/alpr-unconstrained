@@ -16,3 +16,6 @@ services:
       - /media:/media
       - .cache/.vscode-server/:/home/msis_dev/.vscode-server/
     working_dir: $PWD
+    ports: 
+      - 8888:8888
+    
